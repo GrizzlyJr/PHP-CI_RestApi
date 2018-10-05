@@ -27,4 +27,7 @@ INSERT INTO `rest_product` (`id_product`, `product_name`, `price`, `create_date`
  # Headers apikey:kmzway87aa
 
 
- 
+ Sample POST
+ # URL Request PHP-CI_RestApi/api/product/insertProduct
+ # productName:Kunci
+ # productPrice:20000
