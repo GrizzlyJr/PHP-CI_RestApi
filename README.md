@@ -1,5 +1,7 @@
 # PHP-CI_RestApi
 
+
+-- SQL Patch
 DROP TABLE IF EXISTS `rest_product`;
 CREATE TABLE `rest_product` (
   `id_product` int(11) NOT NULL AUTO_INCREMENT,
@@ -19,15 +21,26 @@ INSERT INTO `rest_product` (`id_product`, `product_name`, `price`, `create_date`
  ====================================================================================================================
 
 
- Sample GET
+-- Sample GET
  # URL Request  YourLocation/PHP-CI_RestApi/api/product/dataProduct?id=1
  
- Sample GET with Headers
+-- Sample GET with Headers
  # URL Request YourLocation/PHP-CI_RestApi/api/product/dataProductWithHeaders?id=1
  # Headers apikey:kmzway87aa
 
 
- Sample POST
+-- Sample POST
  # URL Request PHP-CI_RestApi/api/product/insertProduct
  # productName:Kunci
  # productPrice:20000
+
+-- Sample PUT 
+	#	x-www-form-urlencoded
+ # URL Request PHP-CI_RestApi/api/product/updateProduct
+ # productId:1
+ # productPrice:12500
+
+ -- Sample DELETE
+	#	x-www-form-urlencoded
+ # URL Request PHP-CI_RestApi/api/product/delProduct_delete
+ # productId:6

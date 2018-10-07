@@ -21,7 +21,7 @@ class Product extends REST_Controller {
 			'statusCode' => (count($dataSearch)<1) ? 404 : 200,
 			'info' => "Success",
 			'data' => $dataSearch
-		));
+		),201);
 	}
 
 	# URL Request PHP-CI_RestApi/api/product/dataProductWithHeaders?id=1
@@ -33,7 +33,7 @@ class Product extends REST_Controller {
 				'statusCode' => 403,
 				'info' => "Error",
 				'data' => "forbidden access"
-			));
+			),403);
 		}
 
 		if(getallheaders()['apikey']!='kmzway87aa'){
@@ -42,7 +42,7 @@ class Product extends REST_Controller {
 				'statusCode' => 403,
 				'info' => "Error",
 				'data' => "forbidden access"
-			));
+			),403);
 		}
 		
 		$id = $this->input->get('id') ;
@@ -58,13 +58,12 @@ class Product extends REST_Controller {
 			'statusCode' => (count($dataSearch)<1) ? 404 : 200,
 			'info' => "Success",
 			'data' => $dataSearch
-		));
+		),201);
 	}
 
 	# URL Request PHP-CI_RestApi/api/product/insertProduct
 	# productName:Kunci
 	# productPrice:20000
-
 	public function insertProduct_post(){
 		$name = $this->input->post('productName');
 		$price = $this->input->post('productPrice');
@@ -83,7 +82,7 @@ class Product extends REST_Controller {
 				'statusCode' => 500,
 				'info' => "Error",
 				'data' => $errorMsg
-			));
+			),201);
 		}
 
 		$checkName = $this->db->get_where('rest_product',array("product_name"=>$name))->num_rows();
@@ -93,7 +92,7 @@ class Product extends REST_Controller {
 				'statusCode' => 500,
 				'info' => "Error",
 				'data' => 'Duplicate ProductName'
-			));
+			),201);
 		}
 
 		$dataInsert = $this->addNewProduct($name,$price);
@@ -112,7 +111,76 @@ class Product extends REST_Controller {
 			'status' => $status, 
 			'statusCode' => $statusCode,
 			'info' => $info
-		));
+		),201);
+	}
+
+	# URL Request PHP-CI_RestApi/api/product/updateProduct
+	# productId:1
+	# productPrice:12500
+	public function updateProduct_put(){
+		$id = $this->put('productId');
+		$price = $this->put('productPrice');
+
+		$errorMsg='';
+		if(trim($id)=='' || $id==null){
+			$errorMsg.=' Complete product id. ';
+		}
+		if(trim($price)=='' || $price==null){
+			$errorMsg.=' Complete product price. ';
+		}
+
+		if($errorMsg!=''){
+			$this->response(array(
+				'status' => false,
+				'statusCode' => 500,
+				'info' => "Error",
+				'data' => $errorMsg
+			),201);
+		}
+
+		$dataUpdate = $this->updateDataProduct($id,$price);
+		if($dataUpdate==true){
+			$status=true;
+			$statusCode=200;
+			$info="Success";
+		}
+		else{
+			$status=false;
+			$statusCode=500;
+			$info="Error";
+		}
+
+		$this->response(array(
+			'status' => $status, 
+			'statusCode' => $statusCode,
+			'info' => $info
+		),201);
+
+	}
+
+#	x-www-form-urlencoded
+# 	productId:6
+	public function delProduct_delete(){
+		$id = $this->delete('productId');
+
+		$this->db->where('id_product', $id);
+		$this->db->delete('rest_product'); 
+
+		if($this->db->affected_rows() >=0){
+		  	$status=true;
+			$statusCode=200;
+			$info="Success";
+		}else{
+		  	$status=false;
+			$statusCode=500;
+			$info="Error";
+		}
+
+		$this->response(array(
+			'status' => $status, 
+			'statusCode' => $statusCode,
+			'info' => $info
+		),201);
 	}
 
 
@@ -152,6 +220,20 @@ class Product extends REST_Controller {
 		}
 		else{
 			return false;
+		}
+	}
+
+	private function updateDataProduct($id,$price){
+		$data = array(
+			 'price' => $price
+		);
+		$this->db->where('id_product', $id);
+		$this->db->update('rest_product', $data);
+
+		if($this->db->affected_rows() >=0){
+		  	return true;
+		}else{
+		  	return false;
 		}
 	}
 
